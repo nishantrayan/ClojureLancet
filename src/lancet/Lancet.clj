@@ -1,5 +1,4 @@
-(ns lancet.step-1-complete
-  (:use clojure.contrib.except))
+(ns lancet.step-1-complete)
 (def
   #^{:doc "Dummy ant project to keep Ant tasks happy"}
   ant-project
@@ -14,8 +13,6 @@
       (.addBuildListener logger))))
 (defn instantiate-task [project name]
   (let [task (.createTask project name)]
-    (throw-if (nil? task)
-      IllegalArgumentException (str "No task named " name))
     (doto task
       (.init)
       (.setProject project))))
