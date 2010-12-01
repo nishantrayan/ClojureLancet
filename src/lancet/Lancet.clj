@@ -1,4 +1,5 @@
 (ns lancet.step-1-complete)
+(import '(java.beans Introspector))
 (def
   #^{:doc "Dummy ant project to keep Ant tasks happy"}
   ant-project
@@ -16,3 +17,11 @@
     (doto task
       (.init)
       (.setProject project))))
+(def echo-task (instantiate-task ant-project "echo"))
+(.setMessage echo-task "hello")
+(defn property-descriptor [inst prop-name]
+  (first
+    (filter #(= (name prop-name) (.getName %))
+      (.getPropertyDescriptors
+        (Introspector/getBeanInfo (class inst))))))
+(.execute echo-task)
