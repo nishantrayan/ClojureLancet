@@ -12,13 +12,6 @@
     (doto proj
       (.init)
       (.addBuildListener logger))))
-(defn instantiate-task [project name]
-  (let [task (.createTask project name)]
-    (doto task
-      (.init)
-      (.setProject project))))
-(def echo-task (instantiate-task ant-project "echo"))
-(.setMessage echo-task "hello")
 (defn property-descriptor [inst prop-name]
   (first
     (filter #(= (name prop-name) (.getName %))
@@ -27,9 +20,16 @@
 (defn set-property! [inst prop value]
   (let [pd (property-descriptor inst prop)]
     (.invoke (.getWriteMethod pd) inst (into-array [value]))))
-;extending to support setting multiple properties
 (defn set-properties! [inst values]
   (doseq [[k v] values] (set-property! inst k v)))
+(defn instantiate-task [project name properties]
+  (let [task (.createTask project name)]
+    (set-properties! task properties)
+    (doto task
+      (.init)
+      (.setProject project))))
+(def echo-task (instantiate-task ant-project "echo" {:message "helloa"}))
+;extending to support setting multiple properties
 ;before set-property
 (.execute echo-task)
 (set-property! echo-task :message "this was changed later using setProperty function")
