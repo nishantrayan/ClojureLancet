@@ -24,4 +24,11 @@
     (filter #(= (name prop-name) (.getName %))
       (.getPropertyDescriptors
         (Introspector/getBeanInfo (class inst))))))
+(defn set-property! [inst prop value]
+  (let [pd (property-descriptor inst prop)]
+    (.invoke (.getWriteMethod pd) inst (into-array [value]))))
+;before set-property
+(.execute echo-task)
+(set-property! echo-task :message "this was changed later using setProperty function")
+;after set-property
 (.execute echo-task)
